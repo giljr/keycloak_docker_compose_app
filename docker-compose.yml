@@ -1,0 +1,78 @@
+networks:
+  demo-network:
+    ipam:
+      config:
+        - subnet: 172.18.0.0/24
+
+services:
+  db-service:
+    image: postgres:16
+    container_name: my-postgres
+    restart: always
+    networks:
+      demo-network:
+        ipv4_address: 172.18.0.100
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  pgadmin-service:
+    image: dpage/pgadmin4
+    container_name: my-pgadmin
+    restart: always
+    networks:
+      demo-network:
+        ipv4_address: 172.18.0.101
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "5050:80"
+
+  rails-app:
+    build:
+      context: .
+    container_name: rails-container
+    restart: always
+    networks:
+      demo-network:
+        ipv4_address: 172.18.0.102
+    ports:
+      - "3001:3000"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bash
+    depends_on:
+      - db-service
+
+  keycloak-service:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    restart: always
+    networks:
+      demo-network:
+        ipv4_address: 172.18.0.103
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    command: start-dev
+
+  mailhog-service:
+    image: mailhog/mailhog
+    container_name: demo-mail
+    restart: always
+    networks:
+      demo-network:
+        ipv4_address: 172.18.0.104
+    ports:
+      - "8025:8025"
+
+volumes:
+  postgres_data:
