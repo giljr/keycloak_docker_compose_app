@@ -14,7 +14,7 @@ This guide is inspired by [Rails 8 + Keycloak Integration: A Beginner’s Guide]
 ### 🚀 Getting Started
 #### 1️⃣ Clone the project
 ```bash
-git clone https://github.com/giljr/keycloak_docker_app.git
+git clone https://github.com/giljr/keycloak_docker_compose_app
 cd keycloak_docker_app
 ```
 #### 2️⃣ Running Docker Compose Inside Ruby-Based Containers in VS Code
